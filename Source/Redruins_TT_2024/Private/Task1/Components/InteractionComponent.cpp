@@ -3,7 +3,9 @@
 
 #include "Task1/Components/InteractionComponent.h"
 #include "Blueprint/UserWidget.h"
+#include "Shared/SharedFunctionLibrary.h"
 #include "Task1/Interactable.h"
+#include "Task1/Widgets/InteractLable.h"
 
 UInteractionComponent::UInteractionComponent()
 {
@@ -18,12 +20,8 @@ void UInteractionComponent::BeginPlay()
 	{
 		SetComponentTickEnabled(false);
 	}
-	
-	InteractTipWidgetInstance = CreateWidget<UUserWidget>(GetWorld(), InteractTipWidgetClass);
-	check(InteractTipWidgetInstance);
-	
-	InteractTipWidgetInstance->AddToViewport();
-	InteractTipWidgetInstance->SetVisibility(ESlateVisibility::Collapsed);
+
+    InteractTipWidgetInstance = USharedFunctionLibrary::SetupWidgetInstanceChecked<UInteractLable>(GetOwner(), InteractTipWidgetClass);
 }
 
 bool UInteractionComponent::IsHitResultValid(const FHitResult& InHitResult) const
@@ -36,13 +34,13 @@ void UInteractionComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (!GetActorToInteractWith(FocusedActor))
+	if (!GetActorToInteractWith_Internal(FocusedActor))
 	{
 		HideInteractWidget();
 		return;
 	}
 	
-	UpdateInteractWidget();
+    ShowInteractWidget();
 }
 
 void UInteractionComponent::Interact()
@@ -55,7 +53,12 @@ void UInteractionComponent::Interact()
 	IInteractable::Execute_Interact(FocusedActor);
 }
 
-bool UInteractionComponent::GetActorToInteractWith(AActor*& OutInteractActor) const
+AActor* UInteractionComponent::GetActorToInteractWith() const
+{
+    return FocusedActor;
+}
+
+bool UInteractionComponent::GetActorToInteractWith_Internal(AActor*& OutInteractActor) const
 {
 	OutInteractActor = nullptr;
 	
@@ -162,41 +165,22 @@ void UInteractionComponent::GetLineTraceHitResult(FHitResult& OutHitResult, cons
 void UInteractionComponent::HideInteractWidget() const
 {
 	check(InteractTipWidgetInstance);
-	if (!InteractTipWidgetInstance->IsVisible())
-	{
-		return;
-	}
 
-	InteractTipWidgetInstance->SetVisibility(ESlateVisibility::Collapsed);
-}
-
-void UInteractionComponent::UpdateInteractWidget() const
-{
-	check(InteractTipWidgetInstance);
-	check(FocusedActor);
-
-	FVector2D ScreenPosition;
-	const FVector WidgetLocation3D = FocusedActor->GetActorLocation() + FVector(0.0f, 0.0f, InteractTipHeightAdjustment);
-
-	const FVector2D WidgetSize = InteractTipWidgetInstance->GetDesiredSize();
-	GetControllerChecked()->ProjectWorldLocationToScreen(WidgetLocation3D, ScreenPosition);
-	InteractTipWidgetInstance->SetPositionInViewport(ScreenPosition - (WidgetSize / 2));
-
-	if (!InteractTipWidgetInstance->IsVisible())
+    if (InteractTipWidgetInstance->IsVisible())
     {
-    	ShowInteractWidget();
+        InteractTipWidgetInstance->HideLable();
     }
 }
 
 void UInteractionComponent::ShowInteractWidget() const
 {
 	check(InteractTipWidgetInstance);
-	if (InteractTipWidgetInstance->IsVisible())
-	{
-		return;
-	}
+    check(FocusedActor)
 
-	InteractTipWidgetInstance->SetVisibility(ESlateVisibility::Visible);
+    if (!InteractTipWidgetInstance->IsVisible())
+    {
+        InteractTipWidgetInstance->ShowLable(FocusedActor);
+    }
 }
 
 APawn* UInteractionComponent::GetOwnerChecked() const

@@ -7,6 +7,8 @@
 #include "InteractionComponent.generated.h"
 
 
+class UInteractLable;
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class REDRUINS_TT_2024_API UInteractionComponent : public UActorComponent
 {
@@ -20,10 +22,13 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void Interact();
 
+    UFUNCTION(BlueprintCallable)
+    AActor* GetActorToInteractWith() const;
+
 protected:
 	virtual void BeginPlay() override;
 
-	bool GetActorToInteractWith(AActor*& OutInteractActor) const;
+	bool GetActorToInteractWith_Internal(AActor*& OutInteractActor) const;
 	
 	bool IsHitResultValid(const FHitResult& InHitResult) const;
 	
@@ -39,7 +44,6 @@ protected:
 	bool GetHitResult_Internal(FHitResult& OutHitResult, const FVector& InStartLocation, const FVector& InEndLocation) const;
 	
 	void HideInteractWidget() const;
-	void UpdateInteractWidget() const;
 	void ShowInteractWidget() const;
 
 	APawn* GetOwnerChecked() const;
@@ -50,11 +54,11 @@ protected:
 	AActor* FocusedActor;
 
 	UPROPERTY()
-	TObjectPtr<UUserWidget> InteractTipWidgetInstance;
+	TObjectPtr<UInteractLable> InteractTipWidgetInstance;
 	
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
-	TSubclassOf<UUserWidget> InteractTipWidgetClass;
+	TSubclassOf<UInteractLable> InteractTipWidgetClass;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Trace")
 	float InteractTipHeightAdjustment = 50.0f;
