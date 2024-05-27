@@ -20,10 +20,9 @@ public:
     UPROPERTY(EditDefaultsOnly)
     EGigaEnum GigaEnum;
 
-    /*UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "GigaEnum == EGigaEnum::value_true", EditConditionHides))
-    UDA_1* DA_1;*/
+    UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "GigaEnum == EGigaEnum::value_true", EditConditionHides))
+    UDA_1* DA_1_HardRef;
 
-    // it also works with hard ref
     UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "GigaEnum == EGigaEnum::value_true", EditConditionHides, AllowedClasses = "DA_1"))
-    TSoftObjectPtr<UDA_1> DA_1;
+    TSoftObjectPtr<UDA_1> DA_1_SoftRef;
 };

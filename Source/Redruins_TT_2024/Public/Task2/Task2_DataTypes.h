@@ -12,11 +12,11 @@ struct FGigaStruct
 {
     GENERATED_BODY()
 
-    /*UPROPERTY(BlueprintReadWrite, EditAnywhere)
-    UDA_2* DA_2;*/
+    UPROPERTY(BlueprintReadWrite, EditAnywhere)
+    UDA_2* DA_2_HardRef;
     
     UPROPERTY(EditDefaultsOnly, meta = (AllowedClasses = "DA_2"))
-    TSoftObjectPtr<UDA_2> DA_2;
+    TSoftObjectPtr<UDA_2> DA_2_SoftRef;
     
     UPROPERTY(BlueprintReadWrite, EditAnywhere)
     float ImField;

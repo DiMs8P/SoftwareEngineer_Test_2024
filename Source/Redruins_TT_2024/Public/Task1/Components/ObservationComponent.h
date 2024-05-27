@@ -10,8 +10,6 @@
 class IObservable;
 class UPointOfInterest;
 
-
-
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class REDRUINS_TT_2024_API UObservationComponent : public UActorComponent
 {

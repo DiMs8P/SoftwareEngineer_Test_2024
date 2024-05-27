@@ -16,7 +16,7 @@ void UInteractLable::ShowLable(AActor* NewInteraction)
 
 void UInteractLable::HideLable()
 {
-    if (!IsVisible() || !Interaction)
+    if (!IsVisible())
     {
         return;
     }

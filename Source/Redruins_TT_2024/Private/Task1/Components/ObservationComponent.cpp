@@ -17,6 +17,14 @@ void UObservationComponent::BeginPlay()
 {
     Super::BeginPlay();
 
+    const APawn* Owner = Cast<APawn>(GetOwner());
+    check(Owner);
+    if (!Owner->IsPlayerControlled())
+    {
+        SetComponentTickEnabled(false);
+        return;
+    }
+
     TArray<TScriptInterface<IObservable>> InitialObservations;
     GetInitialObservations(InitialObservations);
     for (auto Observation : InitialObservations)
@@ -36,7 +44,7 @@ void UObservationComponent::GetInitialObservations(TArray<TScriptInterface<IObse
     TArray<TObjectPtr<AActor>> Observations;
     UGameplayStatics::GetAllActorsWithInterface(GetOwner(), UObservable::StaticClass(), Observations);
 
-    for (auto Observation : Observations)
+    for (const auto Observation : Observations)
     {
         TScriptInterface<IObservable> InterfaceInstance (Observation);
         OutObservations.Add(InterfaceInstance);

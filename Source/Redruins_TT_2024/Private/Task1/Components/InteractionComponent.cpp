@@ -19,6 +19,7 @@ void UInteractionComponent::BeginPlay()
 	if (!GetOwnerChecked()->IsPlayerControlled())
 	{
 		SetComponentTickEnabled(false);
+	    return;
 	}
 
     InteractTipWidgetInstance = USharedFunctionLibrary::SetupWidgetInstanceChecked<UInteractLable>(GetOwner(), InteractTipWidgetClass);
@@ -128,7 +129,7 @@ void UInteractionComponent::GetPlayerViewTraceLocations(FVector& OutStartLocatio
 
 void UInteractionComponent::GetPlayerViewPoint(FVector& OutViewLocation, FRotator& OutViewRotation) const
 {
-	GetOwnerChecked()->GetActorEyesViewPoint(OutViewLocation, OutViewRotation);
+	GetOwner()->GetActorEyesViewPoint(OutViewLocation, OutViewRotation);
 }
 
 bool UInteractionComponent::GetHitResult_Internal(FHitResult& OutHitResult, const FVector& InStartLocation, const FVector& InEndLocation) const
