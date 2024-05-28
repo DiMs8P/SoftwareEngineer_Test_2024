@@ -30,24 +30,9 @@ void USteeringMovementComponent::BeginPlay()
 void USteeringMovementComponent::DebugDraw(float DeltaTime)
 {
     const FVector CurrentLocation = GetOwner()->GetActorLocation();
-    const FVector ObservationLocation = IObservable::Execute_GetObservationLocation(Target);
-    const FVector Direction = CurrentVelocity.GetSafeNormal();
 
-    const FVector RadiusVector = CurrentLocation - ObservationLocation;
-
-    const float Radius = RadiusVector.Size();
-    const float Speed = CurrentVelocity.Size();
-    const float AngularSpeed = Speed / Radius;
-    
-    const float DeltaAngle = AngularSpeed * DeltaTime;
-    const FVector RotationAxis = FVector::CrossProduct(RadiusVector, Direction).GetSafeNormal();
-    const FQuat RotationQuat = FQuat(RotationAxis, DeltaAngle);
-    
-    const FVector NewRadiusVector = RotationQuat.RotateVector(RadiusVector);
-    
-    DrawDebugLine(GetWorld(), CurrentLocation, CurrentLocation + CurrentVelocity, FColor::Red , false, 5, 0, 2);
-    DrawDebugLine(GetWorld(), ObservationLocation, ObservationLocation + RadiusVector, FColor::Green , false, 5, 0, 2);
-    DrawDebugLine(GetWorld(), ObservationLocation, ObservationLocation + NewRadiusVector, FColor::Blue , false, 5, 0, 2);
+    DrawDebugLine(GetWorld(), CurrentLocation, CurrentLocation + CurrentVelocity.GetSafeNormal() * bDebugLineLength, FColor::Red , false, 5, 0, 2);
+    DrawDebugLine(GetWorld(), CurrentLocation, CurrentLocation + CurrentAcceleration.GetSafeNormal() * bDebugLineLength, FColor::Green , false, 5, 0, 2);
 }
 
 void USteeringMovementComponent::SetObservation(AActor* InTarget)
@@ -61,6 +46,7 @@ void USteeringMovementComponent::Start()
 
     CurrentVelocity = GetOwner()->GetActorForwardVector() * InitialSpeed;
     CurrentAcceleration = (IObservable::Execute_GetObservationLocation(Target) - GetOwner()->GetActorLocation()).GetSafeNormal() * InitialAcceleration;
+      
     SetComponentTickEnabled(true);
 }
 
@@ -68,28 +54,19 @@ void USteeringMovementComponent::TickComponent(float DeltaTime, ELevelTick TickT
 {
     Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+    CurrentAcceleration = (IObservable::Execute_GetObservationLocation(Target) - GetOwner()->GetActorLocation()).GetSafeNormal() * InitialAcceleration;
+
+    const FVector DeltaVelocity = CurrentAcceleration * DeltaTime;
+    CurrentVelocity = CurrentVelocity + DeltaVelocity;
+
     const FVector CurrentLocation = GetOwner()->GetActorLocation();
-    const FVector ObservationLocation = IObservable::Execute_GetObservationLocation(Target);
-    const FVector Direction = CurrentVelocity.GetSafeNormal();
+    const FVector NewLocation = CurrentLocation + CurrentVelocity * DeltaTime;
 
-    const FVector RadiusVector = CurrentLocation - ObservationLocation;
-
-    const float Radius = RadiusVector.Size();
-    const float Speed = CurrentVelocity.Size();
-    const float AngularSpeed = Speed / Radius;
-    
-    const float DeltaAngle = AngularSpeed * DeltaTime;
-    const FVector RotationAxis = FVector::CrossProduct(RadiusVector, Direction).GetSafeNormal();
-    const FQuat RotationQuat = FQuat(RotationAxis, DeltaAngle);
-    const FVector NewRadiusVector = RotationQuat.RotateVector(RadiusVector);
-    
-    const FVector NewLocation = ObservationLocation + NewRadiusVector;
-    FRotator NewRotation = UKismetMathLibrary::MakeRotFromX(NewRadiusVector - RadiusVector);
+    const FVector DeltaLocation = NewLocation - CurrentLocation;
+    FRotator NewRotation = UKismetMathLibrary::MakeRotFromX(DeltaLocation);
     
     GetOwner()->SetActorLocation(NewLocation);
     GetOwner()->SetActorRotation(NewRotation);
-
-    CurrentVelocity = GetOwner()->GetActorForwardVector() * InitialSpeed;
 
     if (bDebugEnable)
     {

@@ -42,6 +42,9 @@ protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Debug")
     bool bDebugEnable = true;
     
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Debug")
+    float bDebugLineLength = 100;
+    
 protected:
     UPROPERTY()
     AActor* Target;
