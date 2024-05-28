@@ -21,6 +21,12 @@ class REDRUINS_TT_2024_API IInteractable
 	GENERATED_BODY()
 
 public:
+    UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+    void PreInteract();
+    
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Interact();
+
+    UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+    void PostInteract();
 };

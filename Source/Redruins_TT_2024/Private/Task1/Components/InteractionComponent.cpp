@@ -2,10 +2,7 @@
 
 
 #include "Task1/Components/InteractionComponent.h"
-#include "Blueprint/UserWidget.h"
-#include "Shared/SharedFunctionLibrary.h"
 #include "Task1/Interactable.h"
-#include "Task1/Widgets/InteractLable.h"
 
 UInteractionComponent::UInteractionComponent()
 {
@@ -21,8 +18,6 @@ void UInteractionComponent::BeginPlay()
 		SetComponentTickEnabled(false);
 	    return;
 	}
-
-    InteractTipWidgetInstance = USharedFunctionLibrary::SetupWidgetInstanceChecked<UInteractLable>(GetOwner(), InteractTipWidgetClass);
 }
 
 bool UInteractionComponent::IsHitResultValid(const FHitResult& InHitResult) const
@@ -35,13 +30,14 @@ void UInteractionComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+    AActor* PrevFocusedActor = FocusedActor;
 	if (!GetActorToInteractWith_Internal(FocusedActor))
 	{
-		HideInteractWidget();
+	    TryNotifyPostInteraction(PrevFocusedActor);
 		return;
 	}
-	
-    ShowInteractWidget();
+
+    TryNotifyPreInteraction(PrevFocusedActor);
 }
 
 void UInteractionComponent::Interact()
@@ -163,24 +159,19 @@ void UInteractionComponent::GetLineTraceHitResult(FHitResult& OutHitResult, cons
 	GetWorld()->LineTraceSingleByChannel(OutHitResult, InStartLocation, InEndLocation, ECC_Visibility, CollisionQueryParams);
 }
 
-void UInteractionComponent::HideInteractWidget() const
+void UInteractionComponent::TryNotifyPostInteraction(AActor* PrevFocusedActor) const
 {
-	check(InteractTipWidgetInstance);
-
-    if (InteractTipWidgetInstance->IsVisible())
+    if (PrevFocusedActor && !FocusedActor)
     {
-        InteractTipWidgetInstance->HideLable();
+        IInteractable::Execute_PostInteract(PrevFocusedActor);
     }
 }
 
-void UInteractionComponent::ShowInteractWidget() const
+void UInteractionComponent::TryNotifyPreInteraction(const AActor* PrevFocusedActor) const
 {
-	check(InteractTipWidgetInstance);
-    check(FocusedActor)
-
-    if (!InteractTipWidgetInstance->IsVisible())
+    if (!PrevFocusedActor && FocusedActor)
     {
-        InteractTipWidgetInstance->ShowLable(FocusedActor);
+        IInteractable::Execute_PreInteract(FocusedActor);
     }
 }
 

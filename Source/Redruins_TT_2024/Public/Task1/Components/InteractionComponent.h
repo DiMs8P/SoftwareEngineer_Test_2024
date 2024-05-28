@@ -6,9 +6,6 @@
 #include "Components/ActorComponent.h"
 #include "InteractionComponent.generated.h"
 
-
-class UInteractLable;
-
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class REDRUINS_TT_2024_API UInteractionComponent : public UActorComponent
 {
@@ -16,7 +13,7 @@ class REDRUINS_TT_2024_API UInteractionComponent : public UActorComponent
 
 public:	
 	UInteractionComponent();
-
+    
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION(BlueprintCallable)
@@ -42,9 +39,9 @@ protected:
 
 	void GetLineTraceHitResult(FHitResult& OutHitResult, const FVector& InStartLocation, const FVector& InEndLocation) const;
 	bool GetHitResult_Internal(FHitResult& OutHitResult, const FVector& InStartLocation, const FVector& InEndLocation) const;
-	
-	void HideInteractWidget() const;
-	void ShowInteractWidget() const;
+
+    void TryNotifyPostInteraction(AActor* PrevFocusedActor) const;
+    void TryNotifyPreInteraction(const AActor* PrevFocusedActor) const;
 
 	APawn* GetOwnerChecked() const;
 	APlayerController* GetControllerChecked() const;
@@ -52,17 +49,8 @@ protected:
 protected:
 	UPROPERTY()
 	AActor* FocusedActor;
-
-	UPROPERTY()
-	TObjectPtr<UInteractLable> InteractTipWidgetInstance;
 	
 protected:
-	UPROPERTY(EditDefaultsOnly, Category = "UI")
-	TSubclassOf<UInteractLable> InteractTipWidgetClass;
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Trace")
-	float InteractTipHeightAdjustment = 50.0f;
-	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Trace")
 	bool bDebugEnable = false;
 	
