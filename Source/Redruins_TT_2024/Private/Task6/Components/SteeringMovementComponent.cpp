@@ -115,7 +115,7 @@ void USteeringMovementComponent::TickComponent(float DeltaTime, ELevelTick TickT
     const FVector NewLocation = CurrentLocation + CurrentVelocity * DeltaTime;
 
     const FVector DeltaLocation = NewLocation - CurrentLocation;
-    FRotator NewRotation = GetRotatorFromDeltaLocation(DeltaLocation);
+    const FRotator NewRotation = GetRotatorFromDeltaLocation(DeltaLocation);
 
     FHitResult SweepHitResult;
     GetOwner()->SetActorLocation(NewLocation, true, &SweepHitResult);
@@ -127,7 +127,6 @@ void USteeringMovementComponent::TickComponent(float DeltaTime, ELevelTick TickT
     }
 
     UpdateAcceleration();
-
     if (SweepHitResult.bBlockingHit)
     {
         HandleCollision(SweepHitResult);
