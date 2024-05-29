@@ -3,7 +3,6 @@
 
 #include "Task5/WeaponComponent.h"
 
-#include "Shared/SharedFunctionLibrary.h"
 #include "Task5/Projectile.h"
 
 DEFINE_LOG_CATEGORY(LogWeaponComponent);

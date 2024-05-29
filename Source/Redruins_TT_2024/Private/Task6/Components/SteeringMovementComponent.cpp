@@ -58,7 +58,7 @@ void USteeringMovementComponent::HandleCollision(const FHitResult& InHitResult)
 
 FVector USteeringMovementComponent::GetTargetAcceleration() const
 {
-    const FVector CurrentTargetRadiusVector = (IObservable::Execute_GetObservationLocation(Target) - GetOwner()->GetActorLocation());
+    const FVector CurrentTargetRadiusVector = Target->GetActorLocation() - GetOwner()->GetActorLocation();
     return CurrentTargetRadiusVector.GetSafeNormal() * TargetAccelerationFactor;
 }
 
@@ -67,7 +67,7 @@ FVector USteeringMovementComponent::GetDynamicObjectsAcceleration() const
     FVector AverageAccelerationDirection = FVector::Zero();
     for (auto DynamicObject : DynamicObjects)
     {
-        const FVector CurrentTargetRadiusVector = (IObservable::Execute_GetObservationLocation(DynamicObject) - GetOwner()->GetActorLocation());
+        const FVector CurrentTargetRadiusVector = DynamicObject->GetActorLocation() - GetOwner()->GetActorLocation();
         AverageAccelerationDirection += CurrentTargetRadiusVector.GetSafeNormal();
     }
 

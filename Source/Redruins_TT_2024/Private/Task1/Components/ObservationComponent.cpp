@@ -4,9 +4,7 @@
 #include "Task1/Components/ObservationComponent.h"
 
 #include "Kismet/GameplayStatics.h"
-#include "Shared/SharedFunctionLibrary.h"
-#include "Task1/Observable.h"
-#include "Task1/Widgets/PointOfInterest.h"
+#include "Task1/Actors/InterestPoint.h"
 
 UObservationComponent::UObservationComponent()
 {
@@ -25,28 +23,23 @@ void UObservationComponent::BeginPlay()
         return;
     }
 
-    TArray<TScriptInterface<IObservable>> InitialObservations;
-    GetInitialObservations(InitialObservations);
-    for (auto Observation : InitialObservations)
+    GetInitialObservations(CurrentObservations);
+    for (auto Observation : CurrentObservations)
     {
-        TObjectPtr<UPointOfInterest> ObservationMarkerInstance = USharedFunctionLibrary::SetupWidgetInstanceChecked<UPointOfInterest>(GetOwner(), ObservationMarkerWidgetClass);
-        ObservationMarkerInstance->SetObservation(Observation);
-        
-        CurrentObservations.Add(Observation, ObservationMarkerInstance);
+        Observation->Enable();
     }
 }
 
-void UObservationComponent::GetInitialObservations(TArray<TScriptInterface<IObservable>>& OutObservations) const
+void UObservationComponent::GetInitialObservations(TArray<AInterestPoint*>& OutObservations) const
 {
-    // You can get em from Subsystem or somewhere else
-    // You can bind to some game events e.g. OnObservationAdded or others
-    // You also can ask for current player target place here e.g. PlayerObservationSubsystem->GetCurrentObservation()
-    TArray<TObjectPtr<AActor>> Observations;
-    UGameplayStatics::GetAllActorsWithInterface(GetOwner(), UObservable::StaticClass(), Observations);
+    TArray<AActor*> Observations;
+    UGameplayStatics::GetAllActorsOfClass(GetOwner(), AInterestPoint::StaticClass(), Observations);
 
-    for (const auto Observation : Observations)
+    for (AActor* Observation : Observations)
     {
-        TScriptInterface<IObservable> InterfaceInstance (Observation);
-        OutObservations.Add(InterfaceInstance);
+        if (AInterestPoint* InterestPoint = Cast<AInterestPoint>(Observation))
+        {
+            OutObservations.Add(InterestPoint);
+        }
     }
 }

@@ -3,11 +3,14 @@
 
 #include "Task1/Widgets/PointOfInterest.h"
 
-#include "Task1/Observable.h"
-
-void UPointOfInterest::SetObservation(TScriptInterface<IObservable> NewObservation)
+void UPointOfInterest::SetTargetLocation(const FVector& InTargetLocation)
 {
-    Observation = NewObservation;
-    
-    K2_SetObservation();
+    TargetLocation = InTargetLocation;
+}
+
+void UPointOfInterest::SetViewMode(const ViewMode InNewViewMode)
+{
+    TargetViewMode = InNewViewMode;
+      
+    K2_SetViewMode();
 }

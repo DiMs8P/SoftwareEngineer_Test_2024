@@ -6,9 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "ObservationComponent.generated.h"
 
-
-class IObservable;
-class UPointOfInterest;
+class AInterestPoint;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class REDRUINS_TT_2024_API UObservationComponent : public UActorComponent
@@ -21,12 +19,9 @@ public:
 protected:
     virtual void BeginPlay() override;
 
-    void GetInitialObservations(TArray<TScriptInterface<IObservable>>& OutObservations) const;
+    void GetInitialObservations(TArray<AInterestPoint*>& OutObservations) const;
 
 protected:
-    TMap<TScriptInterface<IObservable>, TObjectPtr<UPointOfInterest>> CurrentObservations;
-	
-protected:
-    UPROPERTY(EditDefaultsOnly, Category = "UI")
-    TSubclassOf<UPointOfInterest> ObservationMarkerWidgetClass;
+    UPROPERTY()
+    TArray<AInterestPoint*> CurrentObservations;
 };
