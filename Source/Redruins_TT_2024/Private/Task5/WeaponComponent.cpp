@@ -10,13 +10,12 @@ DEFINE_LOG_CATEGORY(LogWeaponComponent);
 UWeaponComponent::UWeaponComponent()
 {
     PrimaryComponentTick.bCanEverTick = true;
+    SetIsReplicatedByDefault(true);
 }
 
 void UWeaponComponent::BeginPlay()
 {
     Super::BeginPlay();
-
-    check(ProjectileClass);
 }
 
 void UWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -26,18 +25,29 @@ void UWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 
 void UWeaponComponent::Fire()
 {
+    check(ProjectileClass);
     FVector MuzzleLocation;
     FRotator MuzzleRotator;
     GetMuzzleTransform(MuzzleLocation, MuzzleRotator);
-    
-    const FTransform SpawnTransform(MuzzleRotator, MuzzleLocation);
+
+    Server_Fire(MuzzleLocation, MuzzleRotator);
+}
+
+void UWeaponComponent::Server_Fire_Implementation(const FVector& InMuzzleLocation, const FRotator& InMuzzleRotation)
+{
+    const FTransform SpawnTransform(InMuzzleRotation, InMuzzleLocation);
     AProjectile* Projectile = GetWorld()->SpawnActorDeferred<AProjectile>(ProjectileClass, SpawnTransform);
     if (Projectile)
     {
-        Projectile->Initialize(GetProjectileVelocity());
+        Projectile->SetInitialVelocity(GetProjectileVelocity());
         Projectile->SetOwner(GetOwner());
         Projectile->FinishSpawning(SpawnTransform);
     }
+}
+
+void UWeaponComponent::SetProjectile(TSubclassOf<AProjectile> InProjectileClass)
+{
+    ProjectileClass = InProjectileClass;
 }
 
 void UWeaponComponent::GetMuzzleTransform(FVector& OutMuzzleLocation, FRotator& OutMuzzleRotator) const

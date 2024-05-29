@@ -16,12 +16,15 @@ class REDRUINS_TT_2024_API AProjectile : public AActor
 public:
     AProjectile();
 
-    UFUNCTION(BlueprintImplementableEvent)
-    void Initialize(const FVector& InInitialVelocity);
+    UFUNCTION(Server, Reliable)
+    void SetInitialVelocity(const FVector& InInitialVelocity);
 
 protected:
     virtual void BeginPlay() override;
-
+    
 protected:
+    UPROPERTY(Replicated, BlueprintReadOnly)
+    FVector InitialVelocity;
+    
     float LifeTime = 10.0f;
 };

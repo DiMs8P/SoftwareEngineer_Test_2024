@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "WeaponComponent.generated.h"
 
+class AProjectile;
 DECLARE_LOG_CATEGORY_EXTERN(LogWeaponComponent, All, All)
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
@@ -21,6 +22,11 @@ public:
     UFUNCTION(BlueprintCallable)
     void Fire();
 
+    UFUNCTION(Server, Reliable)
+    void Server_Fire(const FVector& InMuzzleLocation, const FRotator& InMuzzleRotation);
+
+    void SetProjectile(TSubclassOf<AProjectile> ProjectileClass);
+    
 protected:
     virtual void BeginPlay() override;
 
@@ -32,7 +38,7 @@ protected:
 
 protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-    TSubclassOf<AActor> ProjectileClass;
+    TSubclassOf<AProjectile> ProjectileClass;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
     float BulletInitialVelocity = 2000;
