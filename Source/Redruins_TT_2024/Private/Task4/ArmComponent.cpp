@@ -5,7 +5,6 @@
 
 UArmComponent::UArmComponent()
 {
-
     PrimaryComponentTick.bCanEverTick = false;
 }
 

@@ -5,11 +5,6 @@
 
 #include "Net/UnrealNetwork.h"
 
-FString UObjectForReplication::ToString() const
-{
-    return FString::Printf(TEXT("Value1: %s, Value2: %f, Value3: %d"), Value1 ? TEXT("True") : TEXT("False"), Value2, Value3);
-}
-
 void UObjectForReplication::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
     UObject::GetLifetimeReplicatedProps(OutLifetimeProps);
@@ -22,4 +17,9 @@ void UObjectForReplication::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>
     {
         BPClass->GetLifetimeBlueprintReplicationList(OutLifetimeProps);
     }
+}
+
+FString UObjectForReplication::ToString() const
+{
+    return FString::Printf(TEXT("Value1: %s, Value2: %f, Value3: %d"), Value1 ? TEXT("True") : TEXT("False"), Value2, Value3);
 }
