@@ -31,7 +31,7 @@ public:
     void ShowMarker();
     
 protected:
-    UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+    UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Screen")
     bool IsTargetOnPlayerScreen() const;
 
     UFUNCTION(BlueprintImplementableEvent)

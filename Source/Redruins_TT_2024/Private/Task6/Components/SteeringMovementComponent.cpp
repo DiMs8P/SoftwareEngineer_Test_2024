@@ -5,7 +5,7 @@
 
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "Task1/Observable.h"
+#include "Task6/Interfaces/PhysicalObject.h"
 
 DEFINE_LOG_CATEGORY(LogSteeringMovementComponent);
 
@@ -22,7 +22,7 @@ void USteeringMovementComponent::BeginPlay()
     SetComponentTickEnabled(false);
 
     TArray<TObjectPtr<AActor>> Objects;
-    UGameplayStatics::GetAllActorsWithInterface(GetOwner(), UObservable::StaticClass(), Objects);
+    UGameplayStatics::GetAllActorsWithInterface(GetOwner(), UPhysicalObject::StaticClass(), Objects);
     check(Objects.Num() > 0);
 
     for (auto Object : Objects)
@@ -59,7 +59,7 @@ void USteeringMovementComponent::HandleCollision(const FHitResult& InHitResult)
 FVector USteeringMovementComponent::GetTargetAcceleration() const
 {
     const FVector CurrentTargetRadiusVector = Target->GetActorLocation() - GetOwner()->GetActorLocation();
-    return CurrentTargetRadiusVector.GetSafeNormal() * TargetAccelerationFactor;
+    return CurrentTargetRadiusVector.GetSafeNormal() * IPhysicalObject::Execute_GetAccelerationFactor(Target);
 }
 
 FVector USteeringMovementComponent::GetDynamicObjectsAcceleration() const
@@ -68,10 +68,10 @@ FVector USteeringMovementComponent::GetDynamicObjectsAcceleration() const
     for (auto DynamicObject : DynamicObjects)
     {
         const FVector CurrentTargetRadiusVector = DynamicObject->GetActorLocation() - GetOwner()->GetActorLocation();
-        AverageAccelerationDirection += CurrentTargetRadiusVector.GetSafeNormal();
+        AverageAccelerationDirection += CurrentTargetRadiusVector.GetSafeNormal() * IPhysicalObject::Execute_GetAccelerationFactor(DynamicObject);
     }
 
-    return AverageAccelerationDirection.GetSafeNormal() * DynamicObjectsAccelerationFactor;
+    return AverageAccelerationDirection;
 }
 
 void USteeringMovementComponent::DebugDraw(float DeltaTime)

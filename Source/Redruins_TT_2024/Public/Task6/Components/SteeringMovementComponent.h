@@ -8,8 +8,6 @@
 
 DECLARE_LOG_CATEGORY_EXTERN(LogSteeringMovementComponent, All, All)
 
-class IObservable;
-
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class REDRUINS_TT_2024_API USteeringMovementComponent : public UActorComponent
 {
@@ -49,12 +47,6 @@ protected:
     
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta=(ToolTip = "Initial speed"))
     float InitialSpeed = 200;
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta=(ToolTip = "Shows how much the target's gravity affects movement"))
-    float TargetAccelerationFactor = 200.f;
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta=(ToolTip = "Shows how much the dynamic objects's gravity affects movement"))
-    float DynamicObjectsAccelerationFactor = 50.f;
     
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta=(ToolTip = "Shows how strongly an object will be repelled upon collision"))
     float CollisionImpactFactor = 10000.f;

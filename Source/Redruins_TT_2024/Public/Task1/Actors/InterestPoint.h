@@ -14,10 +14,10 @@ class REDRUINS_TT_2024_API AInterestPoint : public AActor
 public:
     AInterestPoint();
 
-    UFUNCTION(BlueprintImplementableEvent)
+    UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
     void Enable();
 
-    UFUNCTION(BlueprintImplementableEvent)
+    UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
     void Disable();
 
 protected:
